@@ -1,46 +1,85 @@
-import 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from './src/screens/HomeScreen';
-import ContactScreen from './src/screens/ContactScreen';
 import AboutScreen from './src/screens/AboutScreen';
+import ContactScreen from './src/screens/ContactScreen';
 
+const DetailsScreen = ({ route }) => (
+  <HomeScreen isDetails={true} route={route} />
+);
+
+const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+function MovieStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Lista" component={HomeScreen} />
+      <Stack.Screen name="Detalhes" component={DetailsScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function TabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: { backgroundColor: '#121212', borderTopColor: '#333' },
+        tabBarActiveTintColor: '#E50914',
+        tabBarInactiveTintColor: 'gray',
+        tabBarIcon: ({ color, size }) => {
+          let iconName = route.name === 'Filmes' ? 'film' : 'tv';
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Filmes" component={MovieStack} />
+      <Tab.Screen name="Séries" component={MovieStack} />
+    </Tab.Navigator>
+  );
+}
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Drawer.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: '#1e40af',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-            drawerActiveTintColor: '#1e40af',
-            drawerActiveBackgroundColor: '#dbeafe',
-            drawerInactiveTintColor: '#334155',
-            drawerLabelStyle: {
-              fontSize: 16,
-              fontWeight: '500',
-            },
-            drawerStyle: {
-              backgroundColor: '#f8fafc',
-              width: 260,
-            },
+    <NavigationContainer>
+      <Drawer.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: '#121212' },
+          headerTintColor: '#fff',
+          drawerStyle: { backgroundColor: '#121212', width: 240 },
+          drawerActiveTintColor: '#E50914',
+          drawerInactiveTintColor: '#fff',
+        }}
+      >
+        <Drawer.Screen 
+          name="Início" 
+          component={TabNavigator} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="home" size={22} color={color} />
           }}
-        >
-          <Drawer.Screen name="Home" component={HomeScreen} />
-          <Drawer.Screen name="Contato" component={ContactScreen} />
-          <Drawer.Screen name="Sobre" component={AboutScreen} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+        />
+        <Drawer.Screen 
+          name="Sobre" 
+          component={AboutScreen} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="information-circle" size={22} color={color} />
+          }}
+        />
+        <Drawer.Screen 
+          name="Contato" 
+          component={ContactScreen} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="mail" size={22} color={color} />
+          }}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
