@@ -83,3 +83,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
+ 
+const s = StyleSheet.create({
+  placeholder: { flex: 1, backgroundColor: '#1c1c1c', justifyContent: 'center', alignItems: 'center' },
+  txt: { color: '#fff', fontSize: 18 },
+});
