@@ -1,216 +1,84 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  SafeAreaView,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
- 
-import dados from '../dados.json';
- 
-export default function HomeScreen() {
-  const navigation = useNavigation();
- 
-  const renderPoster = ({ item }) => (
-    <TouchableOpacity
-      style={styles.poster}
-      onPress={() => navigation.navigate('Detalhes', { item })}
+import { View, Text, StyleSheet, FlatList, Image, ScrollView, TouchableOpacity } from 'react-native';
+
+const emCartazData = [
+  { id: '1', nome: 'Hail Mary', imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI3ZX1uL02xsVtK2cSus1yGMzTdljjROxS2Q&s' },
+  { id: '2', nome: 'Michael', imagem: 'https://www.estadao.com.br/resizer/v2/JJEYVX3G3RA3VF7RCQHMWEUWPE.jpg?quality=80&auth=88cc49b168b2aa57b596f9274a0e6c35225e769eeeecbdf22e98e6f9e8cc44dd&width=380' },
+];
+
+const top10Data = [
+  { id: '3', nome: 'The Boys', imagem: 'https://i.ebayimg.com/00/s/MTYwMFgxMDgw/z/pyIAAOSwA8tfMGX9/$_57.JPG?set_id=8800005007' },
+  { id: '4', nome: 'Invencível', imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4vK00pQYnpiJKwnKaXVu44qKanXjb-pf6wQ&s' },
+  { id: '5', nome: 'Pânico 7', imagem: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfIMXIJr8aYcnfLzXGKa38i6Zfan0yDLuw7w&s' },
+];
+
+export default function HomeScreen({ navigation }) {
+  const renderMovieItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => navigation.navigate('Detalhes', { filmeId: item.id })}
     >
-      <Image source={{ uri: item.imagem }} style={styles.posterImg} />
+      <Image source={{ uri: item.imagem }} style={styles.poster} />
     </TouchableOpacity>
   );
- 
-  const renderTop10 = ({ item, index }) => (
-    <TouchableOpacity
-      style={styles.top10Card}
-      onPress={() => navigation.navigate('Detalhes', { item })}
-    >
-      <Image source={{ uri: item.imagem }} style={styles.top10Img} />
-      <Text style={styles.top10Num}>{index + 1}</Text>
-      {item.usuario ? (
-        <View style={styles.nameTag}>
-          <Text style={styles.nameTagText}>{item.usuario}</Text>
-        </View>
-      ) : null}
-    </TouchableOpacity>
-  );
- 
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#7a0000" />
- 
-      <View style={styles.topbar}>
-        <TouchableOpacity style={styles.hamburger}>
-          <View style={styles.hambLine} />
-          <View style={styles.hambLine} />
-          <View style={styles.hambLine} />
-        </TouchableOpacity>
+    <ScrollView style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Em cartaz</Text> 
+        <FlatList
+          data={emCartazData}
+          renderItem={renderMovieItem}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.listContainer}
+        />
       </View>
- 
-      <Text style={styles.pageLabel}>Inicio</Text>
- 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <TouchableOpacity
-          style={styles.heroBox}
-          onPress={() => navigation.navigate('Detalhes', { item: dados.destaque })}
-        >
-          <Image source={{ uri: dados.destaque.imagem }} style={styles.heroImg} />
-          <View style={styles.heroOverlay} />
-          <Text style={styles.heroTitle}>{dados.destaque.nome}</Text>
-        </TouchableOpacity>
- 
-        <Text style={styles.sectionLabel}>Em cartaz</Text>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Top 10 da semana</Text>
         <FlatList
-          data={dados.emCartaz}
-          renderItem={renderPoster}
-          keyExtractor={(item) => String(item.id)}
+          data={top10Data}
+          renderItem={renderMovieItem}
+          keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.hscroll}
+          contentContainerStyle={styles.listContainer}
         />
- 
-        <Text style={[styles.sectionLabel, { paddingTop: 4 }]}>Top 10 d...</Text>
-        <FlatList
-          data={dados.top10}
-          renderItem={renderTop10}
-          keyExtractor={(item) => String(item.id)}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.hscroll}
-        />
- 
-        <View style={{ height: 20 }} />
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </ScrollView>
   );
 }
- 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1c1c1c',
+    backgroundColor: '#121212',
   },
-  topbar: {
-    height: 44,
-    backgroundColor: '#7a0000',
-    justifyContent: 'center',
-    paddingHorizontal: 14,
+  section: {
+    marginTop: 20,
+    marginBottom: 10,
   },
-  hamburger: {
-    gap: 4,
+  sectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginBottom: 15,
   },
-  hambLine: {
-    width: 20,
-    height: 2,
-    backgroundColor: '#fff',
-    borderRadius: 1,
-    marginBottom: 4,
+  listContainer: {
+    paddingLeft: 15,
   },
-  pageLabel: {
-    color: '#ccc',
-    fontSize: 12,
-    textAlign: 'center',
-    paddingVertical: 8,
-  },
-  heroBox: {
-    marginHorizontal: 14,
+  card: {
+    marginRight: 15,
     borderRadius: 10,
-    height: 150,
     overflow: 'hidden',
-    backgroundColor: '#2a2a2a',
-    position: 'relative',
-  },
-  heroImg: {
-    width: '100%',
-    height: '100%',
-    opacity: 0.55,
-  },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-  heroTitle: {
-    position: 'absolute',
-    bottom: 8,
-    left: 10,
-    right: 10,
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  sectionLabel: {
-    color: '#e05050',
-    fontSize: 13,
-    fontWeight: '700',
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 8,
-  },
-  hscroll: {
-    paddingHorizontal: 14,
-    paddingBottom: 14,
-    gap: 8,
   },
   poster: {
-    width: 72,
-    height: 105,
-    borderRadius: 6,
-    overflow: 'hidden',
-    backgroundColor: '#333',
-    marginRight: 8,
-  },
-  posterImg: {
-    width: '100%',
-    height: '100%',
-  },
-  top10Card: {
-    width: 104,
-    height: 70,
-    position: 'relative',
-    marginRight: 8,
-  },
-  top10Img: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    width: 80,
-    height: 70,
-    borderRadius: 6,
-  },
-  top10Num: {
-    position: 'absolute',
-    left: 0,
-    bottom: -4,
-    fontSize: 42,
-    fontWeight: '900',
-    color: '#2a2a2a',
-    lineHeight: 42,
-    textShadowColor: '#666',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 1,
-    zIndex: 2,
-  },
-  nameTag: {
-    position: 'absolute',
-    bottom: 0,
-    left: 18,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    borderBottomRightRadius: 6,
-    borderBottomLeftRadius: 6,
-    paddingVertical: 2,
-    paddingHorizontal: 3,
-  },
-  nameTagText: {
-    color: '#fff',
-    fontSize: 8,
-    fontWeight: '600',
-    textAlign: 'center',
+    width: 140,
+    height: 210,
+    borderRadius: 10,
+    resizeMode: 'cover',
   },
 });

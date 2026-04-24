@@ -1,75 +1,84 @@
 import React from 'react';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
- 
-import HomeScreen from './HomeScreen';
- 
-const Drawer = createDrawerNavigator();
+
+import HomeScreen from './src/screens/HomeScreen';
+import AboutScreen from './src/screens/AboutScreen';
+import ContactScreen from './src/screens/ContactScreen';
+
+const DetailsScreen = ({ route }) => (
+  <HomeScreen isDetails={true} route={route} />
+);
+
 const Tab = createBottomTabNavigator();
- 
-function FilmesPlaceholder() {
-  return <View style={s.placeholder}><Text style={s.txt}>Filmes</Text></View>;
+const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+function MovieStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Lista" component={HomeScreen} />
+      <Stack.Screen name="Detalhes" component={DetailsScreen} />
+    </Stack.Navigator>
+  );
 }
-function SeriesPlaceholder() {
-  return <View style={s.placeholder}><Text style={s.txt}>Séries</Text></View>;
-}
-function BuscarPlaceholder() {
-  return <View style={s.placeholder}><Text style={s.txt}>Buscar</Text></View>;
-}
-function SobrePlaceholder() {
-  return <View style={s.placeholder}><Text style={s.txt}>Sobre</Text></View>;
-}
-function ContatoPlaceholder() {
-  return <View style={s.placeholder}><Text style={s.txt}>Contato</Text></View>;
-}
- 
-function Tabs() {
+
+function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: {
-          backgroundColor: '#1c1c1c',
-          borderTopColor: '#333',
-          borderTopWidth: 1,
-        },
-        tabBarActiveTintColor: '#e05050',
-        tabBarInactiveTintColor: '#888',
+        tabBarStyle: { backgroundColor: '#121212', borderTopColor: '#333' },
+        tabBarActiveTintColor: '#E50914',
+        tabBarInactiveTintColor: 'gray',
         tabBarIcon: ({ color, size }) => {
-          const icons = {
-            Filmes: 'grid-outline',
-            Buscar: 'search-outline',
-            Series: 'tv-outline',
-          };
-          return <Ionicons name={icons[route.name]} size={size} color={color} />;
+          let iconName = route.name === 'Filmes' ? 'film' : 'tv';
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen name="Filmes" component={HomeScreen} />
-      <Tab.Screen name="Buscar" component={BuscarPlaceholder} />
-      <Tab.Screen name="Series" component={SeriesPlaceholder} />
+      <Tab.Screen name="Filmes" component={MovieStack} />
+      <Tab.Screen name="Séries" component={MovieStack} />
     </Tab.Navigator>
   );
 }
- 
+
 export default function App() {
   return (
     <NavigationContainer>
       <Drawer.Navigator
         screenOptions={{
-          headerShown: false,
-          drawerStyle: { backgroundColor: '#1c1c1c' },
-          drawerLabelStyle: { color: '#fff', fontSize: 15 },
-          drawerActiveTintColor: '#e05050',
-          drawerInactiveTintColor: '#aaa',
+          headerStyle: { backgroundColor: '#121212' },
+          headerTintColor: '#fff',
+          drawerStyle: { backgroundColor: '#121212', width: 240 },
+          drawerActiveTintColor: '#E50914',
+          drawerInactiveTintColor: '#fff',
         }}
       >
-        <Drawer.Screen name="Início" component={Tabs} />
-        <Drawer.Screen name="Sobre" component={SobrePlaceholder} />
-        <Drawer.Screen name="Contato" component={ContatoPlaceholder} />
+        <Drawer.Screen 
+          name="Início" 
+          component={TabNavigator} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="home" size={22} color={color} />
+          }}
+        />
+        <Drawer.Screen 
+          name="Sobre" 
+          component={AboutScreen} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="information-circle" size={22} color={color} />
+          }}
+        />
+        <Drawer.Screen 
+          name="Contato" 
+          component={ContactScreen} 
+          options={{
+            drawerIcon: ({ color }) => <Ionicons name="mail" size={22} color={color} />
+          }}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );
